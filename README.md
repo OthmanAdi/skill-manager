@@ -160,7 +160,7 @@ node index.js search "react hooks"
 
 **安装步骤：**
 
-1. 将 `skill-manager` 文件夹复制到 `~/.claude/skills/` 目录
+1. 将 `skill-manager` 文件夹复制到 `~/.claude/skills/` 目录，个人目录或项目目录
 2. 重启 Claude Code
 3. 使用自然语言与 Claude 交互
 
@@ -195,7 +195,7 @@ cd skill-manager
 node index.js search "关键词"
 node index.js install "关键词" 编号
 
-# 方式二：让 Antigravity 助手执行
+# 方式二：让 claude code或Antigravity 助手执行
 # 直接用自然语言描述需求，Antigravity 会自动调用相关命令
 ```
 

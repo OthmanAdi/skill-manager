@@ -96,6 +96,72 @@ Claude will:
 3. Install your selected skill
 4. Display the usage guide
 
+## 🤖 AI Programming Assistants Usage
+
+### Using with Claude Code
+
+[Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) is the official AI programming assistant from Anthropic.
+
+**Installation Steps:**
+
+1. Copy the `skill-manager` folder to the `~/.claude/skills/` directory (personal or project directory)
+2. Restart Claude Code
+3. Interact with Claude using natural language
+
+**Example Commands:**
+
+```
+"Help me search for Python testing skills"
+"Find a Docker deployment skill"
+"Install the first one from the search results"
+"List all React related skills"
+```
+
+**Notes:**
+- Ensure the `SKILL.md` file exists in the skill-manager root directory
+- Claude Code will automatically read SKILL.md to understand how to use this tool
+
+### Using with Antigravity
+
+[Antigravity](https://deepmind.google/) is an AI programming assistant from Google DeepMind.
+
+**Installation Steps:**
+
+1. Create the `.agent/skills/` directory in your project (if it doesn't exist)
+2. Copy the `skill-manager` folder to the `.agent/skills/` directory
+3. Or run the command-line tool directly in your project
+
+**Usage Methods:**
+
+```bash
+# Method 1: Use command line directly
+cd skill-manager
+node index.js search "keyword"
+node index.js install "keyword" number
+
+# Method 2: Let Claude Code or Antigravity assistant execute
+# Describe your needs in natural language, and the assistant will automatically call the relevant commands
+```
+
+**Example Commands:**
+
+```
+"Please help me search for TypeScript related skills"
+"Install a code review skill"
+"Find skills suitable for frontend development"
+```
+
+### General Tips
+
+Both AI assistants support the following operations:
+
+| Operation | Description |
+|-----------|-------------|
+| Search Skills | Search 31,767+ skills using keywords |
+| Install Skills | Install by specifying the search result number |
+| Bilingual Search | Support both English and Chinese search |
+| View Details | Display GitHub statistics for skills |
+
 ## Database Structure
 
 The skills database (`all_skills_with_cn.json`) contains:
