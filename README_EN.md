@@ -1,4 +1,7 @@
 # Skill Manager
+
+![Skill Manager Banner](./data/banner.png)
+
  
 **English** | [中文](README.md)
 

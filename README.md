@@ -1,5 +1,8 @@
 # Skill Manager | 技能管理器
 
+![Skill Manager Banner](./data/banner.png)
+
+
 > 为agent搜索、浏览和安装 31,767+ 个 github社区中Skill
 
 [English](README_EN.md) | **中文**
@@ -9,11 +12,7 @@
 Skill Manager 是一个 Claude Code skill管理工具，让你轻松发现和安装来自github社区的 31,767+ 个skill。支持中英文双语搜索，一键安装，自动配置。
 
 
-## 交流  
 
-[github:buzhangsan](https://github.com/buzhangsan)
-[x:buzhangsan](https://x.com/MolingDream)
-![微信公众号交流群:agisir](./data/acc.png)
 
 ## ✨ 特性
 
@@ -22,6 +21,8 @@ Skill Manager 是一个 Claude Code skill管理工具，让你轻松发现和安
 - 📥 **一键安装** - 自动从 GitHub 下载和安装
 - 📊 **GitHub 统计** - 显示星标、Fork 数等信息
 - 📖 **使用指南** - 安装后自动显示配置说明
+
+
 
 ## 🚀 快速开始
 
@@ -150,6 +151,15 @@ node index.js search "react hooks"
 "搜索 Docker 相关的技能"
 "安装第一个"
 ```
+
+
+
+## 交流  
+
+- [github:buzhangsan](https://github.com/buzhangsan)
+- [x:buzhangsan](https://x.com/MolingDream)
+
+<img src="./data/group.png" width="50%">
 
 ## 🌟 项目亮点
 
