@@ -26,7 +26,7 @@ Created a comprehensive Claude Code skill manager that enables users to search, 
 - Detailed feature descriptions
 - Integration instructions
 
-### 3. Documentation (`README.md`)
+### 3. Documentation (`README.md`, `README_EN.md`)
 - Comprehensive usage guide
 - Command-line interface documentation
 - Database structure explanation
@@ -130,7 +130,8 @@ Return top N results
 skill-manager/
 ├── index.js                     # Main implementation (317 lines)
 ├── SKILL.md                     # Skill configuration
-├── README.md                    # Comprehensive documentation
+├── README.md                    # Chinese documentation
+├── README_EN.md                 # English documentation
 ├── package.json                 # NPM package definition
 └── ../skills_data/
     └── all_skills_with_cn.json  # Skills database (30.33 MB)
