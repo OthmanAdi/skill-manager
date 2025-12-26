@@ -7,7 +7,7 @@ const http = require('http');
 const { execSync } = require('child_process');
 
 // Load skills database
-const SKILLS_DB_PATH = path.join(__dirname, 'data', 'all_skills_with_cn.json');
+const SKILLS_DB_PATH = path.join(__dirname, '..', 'data', 'all_skills_with_cn.json');
 let skillsDatabase = [];
 
 try {

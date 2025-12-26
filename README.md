@@ -5,7 +5,7 @@
 
 > 为agent搜索、浏览和安装 31,767+ 个 github社区中Skill
 
-[English](README_EN.md) | **中文**
+[English](docs/README_EN.md) | **中文**
 
 ## 🎯 简介
 
@@ -83,13 +83,19 @@ Skill Manager 是一个 Claude Code skill管理工具，让你轻松发现和安
 
 ```
 skill-manager/
-├── index.js                     # 主程序
-├── data/
-│   └── all_skills_with_cn.json  # 31,767 个技能（30.33 MB）
 ├── SKILL.md                     # Skill 配置
 ├── README.md                    # 本文件 (中文)
-├── README_EN.md                 # 英文文档
-└── INSTALLATION.md              # 详细安装指南（中文）
+├── src/                         # 源代码
+│   ├── index.js                 # 主程序
+│   └── package.json             # NPM 包配置
+├── data/                        # 数据文件
+│   └── all_skills_with_cn.json  # 31,767 个技能（30.33 MB）
+└── docs/                        # 文档
+    ├── README_EN.md             # 英文文档
+    ├── INSTALLATION.md          # 详细安装指南
+    ├── CHANGELOG.md             # 更新日志
+    ├── PROJECT_SUMMARY.md       # 项目总结
+    └── UPGRADE_GUIDE.md         # 升级指南
 ```
 
 
@@ -113,9 +119,9 @@ skill-manager/
 
 ## 📖 完整文档
 
-- **[INSTALLATION.md](INSTALLATION.md)** - 详细安装和使用指南（中文）
-- **[README_EN.md](README_EN.md)** - 完整英文文档
-- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - 项目技术总结
+- **[INSTALLATION.md](docs/INSTALLATION.md)** - 详细安装和使用指南（中文）
+- **[README_EN.md](docs/README_EN.md)** - 完整英文文档
+- **[PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)** - 项目技术总结
 
 ## 🛠️ 系统要求
 
@@ -141,9 +147,9 @@ skill-manager/
 
 ## 📞 获取帮助
 
-1. 查看 [INSTALLATION.md](INSTALLATION.md) 获取详细说明
-2. 阅读 [README_EN.md](README_EN.md) 了解更多功能
-3. 检查 [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) 了解技术细节
+1. 查看 [INSTALLATION.md](docs/INSTALLATION.md) 获取详细说明
+2. 阅读 [README_EN.md](docs/README_EN.md) 了解更多功能
+3. 检查 [PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) 了解技术细节
 
 ## 📄 许可证
 

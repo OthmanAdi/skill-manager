@@ -1,9 +1,9 @@
 # Skill Manager
 
-![Skill Manager Banner](./data/banner.jpeg)
+![Skill Manager Banner](../data/banner.jpeg)
 
  
-**English** | [中文](README.md)
+**English** | [中文](../README.md)
 
 A comprehensive Claude Code skill manager that allows you to search, browse, and install skills from a database of 31,767+ community skills.
 
@@ -297,14 +297,19 @@ When you install a skill, the manager:
 
 ```
 skill-manager/
-├── index.js                     # Main implementation
 ├── SKILL.md                     # Skill configuration
 ├── README.md                    # Chinese documentation
-├── README_EN.md                 # This file
-├── package.json                 # NPM package definition
-├── PROJECT_SUMMARY.md           # Project summary
-└── data/
-    └── all_skills_with_cn.json  # Skills database (30.33 MB)
+├── src/                         # Source code
+│   ├── index.js                 # Main implementation
+│   └── package.json             # NPM package definition
+├── data/                        # Data files
+│   └── all_skills_with_cn.json  # Skills database (30.33 MB)
+└── docs/                        # Documentation
+    ├── README_EN.md             # This file
+    ├── INSTALLATION.md          # Installation guide
+    ├── CHANGELOG.md             # Changelog
+    ├── PROJECT_SUMMARY.md       # Project summary
+    └── UPGRADE_GUIDE.md         # Upgrade guide
 ```
 
 ## Error Handling

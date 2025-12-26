@@ -4,15 +4,19 @@
 
 ```
 skill-manager/
-├── index.js                     # 主程序 (317 行)
 ├── SKILL.md                     # Skill 配置文件
 ├── README.md                    # 完整文档 (中文)
-├── README_EN.md                 # 完整文档 (英文)
-├── INSTALLATION.md              # 本文件 (中文安装指南)
-├── PROJECT_SUMMARY.md           # 项目总结
-├── package.json                 # NPM 包配置
-└── data/
-    └── all_skills_with_cn.json  # 技能数据库 (30.33 MB, 31,767 个技能)
+├── src/                         # 源代码
+│   ├── index.js                 # 主程序 (499 行)
+│   └── package.json             # NPM 包配置
+├── data/                        # 数据文件
+│   └── all_skills_with_cn.json  # 技能数据库 (30.33 MB, 31,767 个技能)
+└── docs/                        # 文档
+    ├── README_EN.md             # 完整文档 (英文)
+    ├── INSTALLATION.md          # 本文件 (中文安装指南)
+    ├── CHANGELOG.md             # 更新日志
+    ├── PROJECT_SUMMARY.md       # 项目总结
+    └── UPGRADE_GUIDE.md         # 升级指南
 ```
 
 ## 🚀 快速开始
@@ -31,14 +35,14 @@ skill-manager/
 
 3. **搜索技能**
    ```bash
-   node index.js search "python testing"
-   node index.js search "docker"
-   node index.js search "react"
+   node src/index.js search "python testing"
+   node src/index.js search "docker"
+   node src/index.js search "react"
    ```
 
 4. **安装技能**
    ```bash
-   node index.js install "python testing" 1
+   node src/index.js install "python testing" 1
    ```
    - 第一个参数是搜索关键词
    - 第二个参数是要安装的技能编号
@@ -216,9 +220,9 @@ node index.js install "<搜索关键词>" <编号>
 
 ## 📚 更多信息
 
-- **完整文档**: 查看 `README.md` (中文) 或 `README_EN.md` (英文)
+- **完整文档**: 查看 `../README.md` (中文) 或 `README_EN.md` (英文)
 - **项目总结**: 查看 `PROJECT_SUMMARY.md`
-- **Skill 配置**: 查看 `SKILL.md`
+- **Skill 配置**: 查看 `../SKILL.md`
 
 ## 💡 使用技巧
 
@@ -260,7 +264,7 @@ node index.js install "docker compose" 1
 ## 📞 支持
 
 如有问题：
-1. 查看 `README.md` 或 `README_EN.md` 获取详细文档
+1. 查看 `../README.md` 或 `README_EN.md` 获取详细文档
 2. 检查 `PROJECT_SUMMARY.md` 了解技术细节
 3. 访问技能的 GitHub 仓库获取原始文档
 

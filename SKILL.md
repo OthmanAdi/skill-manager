@@ -70,7 +70,7 @@ Claude will:
 ## Installation
 
 This skill includes the skills database file in the `data/` directory:
-- `skill-manager/data/all_skills_with_cn.json` (30.33 MB)
+- `data/all_skills_with_cn.json` (30.33 MB)
 
 ## Technical Details
 
