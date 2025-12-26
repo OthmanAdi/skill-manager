@@ -98,53 +98,230 @@ function downloadFile(url) {
   });
 }
 
-// Install skill
-async function installSkill(skill) {
-  console.log(`\n📥 Installing skill: ${skill.name}...`);
+// Check if command is available
+function hasCommand(cmd) {
+  try {
+    execSync(`${cmd} --version`, { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Extract skill folder path from GitHub URL
+function extractSkillPath(githubUrl) {
+  // Example: https://github.com/YFOOOO/financial_agent/tree/main/skills/technical-indicators
+  // Extract: skills/technical-indicators
+  const match = githubUrl.match(/github\.com\/[^\/]+\/[^\/]+\/tree\/[^\/]+\/(.+)/);
+  return match ? match[1] : null;
+}
+
+// Extract repo info from GitHub URL
+function extractRepoInfo(githubUrl) {
+  // Example: https://github.com/YFOOOO/financial_agent/tree/main/skills/technical-indicators
+  const match = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)\/tree\/([^\/]+)\/(.+)/);
+  if (!match) return null;
+
+  return {
+    owner: match[1],
+    repo: match[2],
+    branch: match[3],
+    path: match[4]
+  };
+}
+
+// Install skill using SVN (preferred method)
+async function installWithSvn(skill) {
+  const repoInfo = extractRepoInfo(skill.githubUrl);
+  if (!repoInfo) {
+    throw new Error('Invalid GitHub URL format');
+  }
+
+  // Convert GitHub tree URL to SVN URL
+  // https://github.com/owner/repo/tree/branch/path -> https://github.com/owner/repo/trunk/path
+  const svnUrl = `https://github.com/${repoInfo.owner}/${repoInfo.repo}/trunk/${repoInfo.path}`;
+
+  const homeDir = process.env.HOME || process.env.USERPROFILE;
+  const claudeSkillsDir = path.join(homeDir, '.claude', 'skills');
+  const skillDir = path.join(claudeSkillsDir, skill.name);
+
+  // Create skills directory if it doesn't exist
+  if (!fs.existsSync(claudeSkillsDir)) {
+    fs.mkdirSync(claudeSkillsDir, { recursive: true });
+  }
+
+  // Remove existing skill directory if it exists
+  if (fs.existsSync(skillDir)) {
+    console.log(`   ⚠ Removing existing installation...`);
+    fs.rmSync(skillDir, { recursive: true, force: true });
+  }
+
+  console.log(`   Using SVN to download from: ${svnUrl}`);
 
   try {
-    // Get the raw GitHub URL for SKILL.md
-    const rawUrl = skill.githubUrl
-      .replace('github.com', 'raw.githubusercontent.com')
-      .replace('/tree/', '/');
+    execSync(`svn export "${svnUrl}" "${skillDir}"`, {
+      stdio: 'pipe',
+      encoding: 'utf-8'
+    });
+    return skillDir;
+  } catch (error) {
+    throw new Error(`SVN export failed: ${error.message}`);
+  }
+}
 
-    const skillMdUrl = `${rawUrl}/${skill.path}`;
-    console.log(`   Downloading from: ${skillMdUrl}`);
+// Install skill using Git Sparse Checkout
+async function installWithSparseCheckout(skill) {
+  const repoInfo = extractRepoInfo(skill.githubUrl);
+  if (!repoInfo) {
+    throw new Error('Invalid GitHub URL format');
+  }
 
-    // Download SKILL.md content
-    const content = await downloadFile(skillMdUrl);
+  const homeDir = process.env.HOME || process.env.USERPROFILE;
+  const claudeSkillsDir = path.join(homeDir, '.claude', 'skills');
+  const tempDir = path.join(claudeSkillsDir, `.temp_${skill.name}_${Date.now()}`);
+  const skillDir = path.join(claudeSkillsDir, skill.name);
 
-    // Determine installation directory
-    const homeDir = process.env.HOME || process.env.USERPROFILE;
-    const claudeSkillsDir = path.join(homeDir, '.claude', 'skills');
+  // Create skills directory if it doesn't exist
+  if (!fs.existsSync(claudeSkillsDir)) {
+    fs.mkdirSync(claudeSkillsDir, { recursive: true });
+  }
 
-    // Create skills directory if it doesn't exist
-    if (!fs.existsSync(claudeSkillsDir)) {
-      fs.mkdirSync(claudeSkillsDir, { recursive: true });
-      console.log(`   ✓ Created skills directory: ${claudeSkillsDir}`);
+  // Remove existing skill directory if it exists
+  if (fs.existsSync(skillDir)) {
+    console.log(`   ⚠ Removing existing installation...`);
+    fs.rmSync(skillDir, { recursive: true, force: true });
+  }
+
+  console.log(`   Using Git sparse checkout...`);
+
+  try {
+    // Create temp directory
+    fs.mkdirSync(tempDir, { recursive: true });
+
+    // Initialize git repo
+    execSync(`git init`, { cwd: tempDir, stdio: 'pipe' });
+
+    // Add remote
+    const repoUrl = `https://github.com/${repoInfo.owner}/${repoInfo.repo}.git`;
+    execSync(`git remote add origin "${repoUrl}"`, { cwd: tempDir, stdio: 'pipe' });
+
+    // Enable sparse checkout
+    execSync(`git config core.sparseCheckout true`, { cwd: tempDir, stdio: 'pipe' });
+
+    // Set sparse checkout path
+    const sparseCheckoutPath = path.join(tempDir, '.git', 'info', 'sparse-checkout');
+    fs.writeFileSync(sparseCheckoutPath, `${repoInfo.path}/*\n`, 'utf-8');
+
+    // Pull the specific folder
+    console.log(`   Pulling from branch: ${repoInfo.branch}...`);
+    execSync(`git pull origin ${repoInfo.branch} --depth=1`, {
+      cwd: tempDir,
+      stdio: 'pipe',
+      encoding: 'utf-8'
+    });
+
+    // Move the skill folder to final destination
+    const downloadedPath = path.join(tempDir, repoInfo.path);
+    if (!fs.existsSync(downloadedPath)) {
+      throw new Error(`Downloaded path not found: ${downloadedPath}`);
     }
 
-    // Create skill directory
-    const skillDir = path.join(claudeSkillsDir, skill.name);
-    if (!fs.existsSync(skillDir)) {
-      fs.mkdirSync(skillDir, { recursive: true });
+    // Copy to final destination
+    fs.renameSync(downloadedPath, skillDir);
+
+    // Clean up temp directory
+    fs.rmSync(tempDir, { recursive: true, force: true });
+
+    return skillDir;
+  } catch (error) {
+    // Clean up temp directory on error
+    if (fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+    throw new Error(`Sparse checkout failed: ${error.message}`);
+  }
+}
+
+// Fallback: Install only SKILL.md file
+async function installSkillMdOnly(skill) {
+  const rawUrl = skill.githubUrl
+    .replace('github.com', 'raw.githubusercontent.com')
+    .replace('/tree/', '/');
+
+  const skillMdUrl = `${rawUrl}/SKILL.md`;
+  console.log(`   Downloading SKILL.md only from: ${skillMdUrl}`);
+
+  const content = await downloadFile(skillMdUrl);
+
+  const homeDir = process.env.HOME || process.env.USERPROFILE;
+  const claudeSkillsDir = path.join(homeDir, '.claude', 'skills');
+  const skillDir = path.join(claudeSkillsDir, skill.name);
+
+  if (!fs.existsSync(claudeSkillsDir)) {
+    fs.mkdirSync(claudeSkillsDir, { recursive: true });
+  }
+
+  if (!fs.existsSync(skillDir)) {
+    fs.mkdirSync(skillDir, { recursive: true });
+  }
+
+  const skillPath = path.join(skillDir, 'SKILL.md');
+  fs.writeFileSync(skillPath, content, 'utf-8');
+
+  return skillDir;
+}
+
+// Install skill with automatic method selection
+async function installSkill(skill) {
+  console.log(`\n📥 Installing skill: ${skill.name}...`);
+  console.log(`   Source: ${skill.githubUrl}`);
+
+  let skillDir;
+  let installMethod;
+
+  try {
+    // Try methods in order of preference
+    if (hasCommand('svn')) {
+      console.log(`   ✓ SVN detected - using efficient folder download`);
+      installMethod = 'SVN';
+      skillDir = await installWithSvn(skill);
+    } else if (hasCommand('git')) {
+      console.log(`   ✓ Git detected - using sparse checkout`);
+      installMethod = 'Git Sparse Checkout';
+      skillDir = await installWithSparseCheckout(skill);
+    } else {
+      console.log(`   ⚠ Neither SVN nor Git detected - downloading SKILL.md only`);
+      installMethod = 'SKILL.md Only';
+      skillDir = await installSkillMdOnly(skill);
     }
 
-    // Write SKILL.md file
-    const skillPath = path.join(skillDir, 'SKILL.md');
-    fs.writeFileSync(skillPath, content, 'utf-8');
+    console.log(`   ✓ Installed to: ${skillDir}`);
+    console.log(`   ✓ Method used: ${installMethod}`);
 
-    console.log(`   ✓ Installed to: ${skillPath}`);
+    // List installed files
+    const files = fs.readdirSync(skillDir);
+    console.log(`   ✓ Files installed: ${files.join(', ')}`);
 
     // Parse SKILL.md content for configuration info
-    const config = parseSkillConfig(content);
+    const skillMdPath = path.join(skillDir, 'SKILL.md');
+    let config = { name: skill.name, description: skill.description };
+
+    if (fs.existsSync(skillMdPath)) {
+      const content = fs.readFileSync(skillMdPath, 'utf-8');
+      config = parseSkillConfig(content);
+    }
 
     // Display configuration and usage guide
-    displaySkillGuide(skill, config, skillPath);
+    displaySkillGuide(skill, config, skillMdPath, installMethod);
 
     return true;
   } catch (error) {
     console.error(`   ✗ Installation failed: ${error.message}`);
+    console.log(`\n💡 Troubleshooting tips:`);
+    console.log(`   - Install SVN for efficient downloads: ${process.platform === 'win32' ? 'choco install svn' : 'apt-get install subversion'}`);
+    console.log(`   - Ensure Git is installed and accessible`);
+    console.log(`   - Check your internet connection`);
+    console.log(`   - Verify the GitHub URL is accessible: ${skill.githubUrl}`);
     return false;
   }
 }
@@ -182,13 +359,18 @@ function parseSkillConfig(content) {
 }
 
 // Display skill configuration and usage guide
-function displaySkillGuide(skill, config, installPath) {
+function displaySkillGuide(skill, config, installPath, installMethod) {
   console.log('\n' + '='.repeat(80));
   console.log(`📖 Configuration & Usage Guide for: ${skill.name}`);
   console.log('='.repeat(80));
 
   console.log(`\n📍 Installation Path:`);
   console.log(`   ${installPath}`);
+
+  if (installMethod) {
+    console.log(`\n🔧 Installation Method:`);
+    console.log(`   ${installMethod}`);
+  }
 
   console.log(`\n📝 Description:`);
   console.log(`   ${skill.description || config.description || 'No description available'}`);
